@@ -1,3 +1,14 @@
+# Usage
+1. Start docker `docker-compose up`
+2. Populate some date (need mysql)  
+    `mysql -h 127.0.0.1 --protocol="TCP" -p123456 -uismaeel < data/00-clear.sql`  
+    `mysql -h 127.0.0.1 --protocol="TCP" -p123456 -uismaeel < data/01-creation.sql`  
+    `mysql -h 127.0.0.1 --protocol="TCP" -p123456 -uismaeel < data/02-languages.sql`  
+    `mysql -h 127.0.0.1 --protocol="TCP" -p123456 -uismaeel < data/03-location.sql`  
+    `mysql -h 127.0.0.1 --protocol="TCP" -p123456 -uismaeel < data/04-i18n.sql`  
+    `mysql -h 127.0.0.1 --protocol="TCP" -p123456 -uismaeel < data/05-cityOfStation.sql`  
+
+
 # Notes
 ## Generic
 1. Joined city and station together in one entity: Location
@@ -15,12 +26,5 @@ This is not in the current requirements, but it is mroe future-proof.
 1. We can make `address.city` as text as well, but that is much more prune to error / typo, and we already have an auto-complete service which we can adjust for this.
 1. `ON DELETE CASCADE` and `ON UPDATE CASCADE` are possible. Dropping few rows should cause the DB to update, but do we really delete cities or stations? The database we have now is mostly `read-only` mode, and maybe `addition` mode sometimes.
 
-# Usage
-1. Start docker `docker-compose up`
-2. Populate some date (need mysql)  
-    `mysql -h 127.0.0.1 --protocol="TCP" -p123456 -uismaeel < data/00-clear.sql`  
-    `mysql -h 127.0.0.1 --protocol="TCP" -p123456 -uismaeel < data/01-creation.sql`  
-    `mysql -h 127.0.0.1 --protocol="TCP" -p123456 -uismaeel < data/02-languages.sql`  
-    `mysql -h 127.0.0.1 --protocol="TCP" -p123456 -uismaeel < data/03-location.sql`  
-    `mysql -h 127.0.0.1 --protocol="TCP" -p123456 -uismaeel < data/04-i18n.sql`  
-    `mysql -h 127.0.0.1 --protocol="TCP" -p123456 -uismaeel < data/05-cityOfStation.sql`  
+Enjoy the diagram https://dbdiagram.io/d/622606a661d06e6eadb78990
+![Schema](schema.png)

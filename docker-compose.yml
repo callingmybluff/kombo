@@ -1,0 +1,45 @@
+version: '3.4'
+
+x-common-variables: &common-variables
+  MYSQL_ROOT_PASSWORD: 124356
+  DB_USERNAME: ismaeel
+  DB_PASSWORD: 123456
+  DB_NAME: backend
+  MARIADB_USER: ismaeel
+  MARIADB_PASSWORD: 123456
+  MARIADB_DATABASE: backend
+
+services:
+  backend:
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      <<: *common-variables
+      PORT: 3000
+      DB_PORT: 3306
+      DB_HOST: mariadb
+      DB_DIALECT: mariadb
+    networks:
+      - docker-network
+    depends_on:
+      - mariadb
+
+  mariadb:
+    image: mariadb:10.7.1
+    container_name: mariadb
+    ports:
+      - 3306:3306
+    environment: *common-variables
+    networks:
+      - docker-network
+    volumes:
+      - db-data:/data/db
+
+networks:
+  docker-network:
+    driver: bridge
+
+volumes:
+  db-data:
+    driver: local

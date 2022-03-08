@@ -24,7 +24,7 @@ async function appStart(): Promise<Server> {
 
 async function appInitialize() {
   try {
-    await DB.connect()
+    await DB.test()
   }
   catch(e) {
     Logger.debug(e)
@@ -40,7 +40,6 @@ async function appInitialize() {
     shutdownSignals.forEach((signal) =>
       process.on(signal, async () => {
         Logger.info(`${signal} received, closing gracefully ...`)
-        await DB.endConnection()
         await httpTerminator.terminate()
       })
     );

@@ -1,31 +1,51 @@
-import { Sequelize } from 'sequelize'
+import MariaDB from 'mariadb'
 
-import config from '../util/config'
+import Config from '../util/config';
 import Logger from '../util/logger'
 
-const connection = new Sequelize(config.db.name, config.db.username, config.db.password, {
-  host: config.db.host,
-  port: config.db.port,
-  dialect: 'mariadb',
-  logging: Logger.debug.bind(Logger),
+const pool = MariaDB.createPool({
+  host: Config.db.host,
+  user: Config.db.username,
+  password: Config.db.password,
+  database: Config.db.name,
+  port: Config.db.port,
+  connectionLimit: 5,
 });
 
-export default {
-  getConnection: function (): Sequelize {
-    return connection
-  },
-  connect: async function () {
-
-    // Save DB. `force: false` prevent sequelize from dropping old tables
-    await connection.sync({
-      force: false,
-    })
-    return connection.authenticate()
-  },
-  endConnection: async function () {
-    return connection.close()
-  },
-  addToDB: async (app: string, amount: number) => {
-    // connection.query('INSERT INTO ')
+async function connect() {
+  try {
+    return await pool.getConnection()
   }
+  catch {
+    return null
+  }
+}
+
+async function endConnection(connection: MariaDB.PoolConnection) {
+  await connection.release()
+}
+
+async function query(query: string) {
+  const connection = await connect()
+
+  if (connection === null)
+    throw Error('Error connecting')
+  const result = await connection.query(query)
+  await endConnection(connection)
+  return result
+}
+
+export default {
+  test: async function() {
+    const connection = await this.connect()
+
+    if (connection === null)
+      return false
+    await connection.query('SELECT 1 as val')
+    await this.endConnection(connection)
+    return true
+  },
+  connect,
+  endConnection,
+  query,
 }
